@@ -32,8 +32,15 @@ jobs:
       - name: Run tests with pytest
         run: pytest test_eg.py > result.log
       
-      - name: Upload test results
-        uses: actions/upload-artifact@v4  # Updated version
+      - name: Combine test results
+        run: |
+          echo "===== TEST RESULTS FOR ${{ matrix.os }} (Python ${{ matrix.python-version }}) =====" >> combined.log
+          cat result.log >> combined.log
+          echo -e "\n\n" >> combined.log
+      
+      - name: Upload combined test results
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.10'  # Only upload once
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: result.log
+          path: combined.log
