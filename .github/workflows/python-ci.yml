@@ -32,18 +32,10 @@ jobs:
         run: python script.py
       
       - name: Run tests with pytest
-        run: pytest test_eg.py > result.log 2>&1 || echo "Tests failed but continuing"
+        run: pytest test_eg.py > test-result-${{ matrix.os }}-${{ matrix.python-version }}.log 2>&1 || echo "Tests failed but continuing"
       
-      - name: Combine test results
-        shell: bash
-        run: |
-          echo "===== TEST RESULTS FOR ${{ matrix.os }} (Python ${{ matrix.python-version }}) =====" >> combined.log
-          cat result.log >> combined.log
-          printf "\n\n" >> combined.log
-      
-      - name: Upload combined test results
-        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.10'
+      - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
-          path: combined.log
+          name: test-results-${{ matrix.os }}-${{ matrix.python-version }}
+          path: test-result-${{ matrix.os }}-${{ matrix.python-version }}.log
