@@ -36,9 +36,16 @@ jobs:
       
       - name: Combine test results
         run: |
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
           echo "===== TEST RESULTS FOR ${{ matrix.os }} (Python ${{ matrix.python-version }}) =====" >> combined.log
-          cat result.log >> combined.log
-          echo -e "\n\n" >> combined.log
+          type result.log >> combined.log
+          echo "" >> combined.log
+          echo "" >> combined.log
+            else
+              echo "===== TEST RESULTS FOR ${{ matrix.os }} (Python ${{ matrix.python-version }}) =====" >> combined.log
+              cat result.log >> combined.log
+              echo -e "\n\n" >> combined.log
+              fi
       
       - name: Upload combined test results
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.10'
